@@ -2,166 +2,123 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
-import { Menu, X, Sparkles } from "lucide-react";
 
 const NAV_LINKS = [
   { href: "#about", label: "About" },
   { href: "#experience", label: "Experience" },
   { href: "#work", label: "Work" },
-  { href: "#github", label: "GitHub" },
+  { href: "#github", label: "GitHub Activity" },
   { href: "#contact", label: "Contact" },
 ];
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  // Sticky nav shadow on scroll
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Intersection observer for active section highlighting
-  useEffect(() => {
-    const sections = NAV_LINKS.map(({ href }) =>
-      document.querySelector(href)
-    ).filter(Boolean) as Element[];
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(`#${entry.target.id}`);
-          }
-        });
-      },
-      { rootMargin: "-40% 0px -50% 0px" }
-    );
-
-    sections.forEach((s) => observer.observe(s));
-    return () => observer.disconnect();
-  }, []);
-
-  const handleNavClick = () => setMobileOpen(false);
-
   return (
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         scrolled
-          ? "bg-white/80 backdrop-blur-xl border-b border-slate-200/60 shadow-sm"
+          ? "bg-[#edf0f4]/80 backdrop-blur-xl border-b border-slate-300/40 shadow-xs"
           : "bg-transparent"
       )}
     >
-      <nav className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-2 group"
-            data-cursor-hover
-          >
-            <div className="relative w-8 h-8">
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 opacity-90 group-hover:opacity-100 transition-opacity" />
-              <Sparkles className="absolute inset-0 m-auto w-4 h-4 text-white" />
-            </div>
-            <span className="font-bold text-lg tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors">
-              saroj<span className="text-indigo-500">.</span>
-            </span>
-          </Link>
-
-          {/* Desktop nav */}
-          <ul className="hidden md:flex items-center gap-1">
-            {NAV_LINKS.map(({ href, label }) => (
-              <li key={href}>
-                <Link
-                  href={href}
-                  data-cursor-hover
-                  className={cn(
-                    "relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200",
-                    "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80",
-                    activeSection === href &&
-                      "text-indigo-600 bg-indigo-50 hover:bg-indigo-50 hover:text-indigo-600"
-                  )}
-                >
-                  {activeSection === href && (
-                    <span className="absolute inset-x-3 -bottom-px h-px bg-gradient-to-r from-indigo-500/0 via-indigo-500 to-indigo-500/0" />
-                  )}
-                  {label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          {/* CTA */}
-          <div className="hidden md:flex items-center gap-3">
-            <a
-              href="/resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={cn(
-                buttonVariants({ size: "sm" }),
-                "bg-gradient-to-r from-indigo-500 to-violet-600 text-white border-none hover:from-indigo-600 hover:to-violet-700 shadow-sm hover:shadow-indigo-200/60 hover:shadow-md transition-all"
-              )}
+      <nav className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        <div className="flex items-center justify-between h-16 sm:h-20">
+          {/* Left: Triangle Icon + Pill Menu Toggle (matching Screenshot 1) */}
+          <div className="flex items-center gap-3">
+            {/* Minimal Rounded Triangle Glyph */}
+            <Link
+              href="/"
               data-cursor-hover
+              aria-label="Home"
+              className="p-1 rounded-xl hover:bg-slate-200/50 transition-colors"
             >
-              Resume
-            </a>
+              <svg
+                className="w-7 h-7 text-slate-900"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+              </svg>
+            </Link>
+
+            {/* Pill Menu Button with two horizontal lines */}
+            <button
+              onClick={() => setMenuOpen((v) => !v)}
+              data-cursor-hover
+              aria-label="Toggle Navigation Menu"
+              className="flex items-center justify-center w-11 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300/80 active:scale-95 transition-all text-slate-800"
+            >
+              {menuOpen ? (
+                <X className="w-4 h-4" />
+              ) : (
+                <div className="flex flex-col gap-1 items-center justify-center w-4">
+                  <span className="w-4 h-0.5 bg-slate-800 rounded-full" />
+                  <span className="w-4 h-0.5 bg-slate-800 rounded-full" />
+                </div>
+              )}
+            </button>
           </div>
 
-          {/* Mobile hamburger */}
-          <button
-            className="md:hidden p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-            onClick={() => setMobileOpen((v) => !v)}
-            aria-label="Toggle navigation menu"
-            aria-expanded={mobileOpen}
-          >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          {/* Right: Direct Email (matching Screenshot 1) */}
+          <div>
+            <a
+              href="mailto:hey@alexcarter.com"
+              data-cursor-hover
+              className="text-xs sm:text-sm font-medium text-slate-800 hover:text-indigo-600 transition-colors tracking-tight font-mono"
+            >
+              hey@alexcarter.com
+            </a>
+          </div>
         </div>
       </nav>
 
-      {/* Mobile drawer */}
+      {/* Slide-down Glassmorphic Navigation Menu */}
       <div
         className={cn(
-          "md:hidden overflow-hidden transition-all duration-300 ease-in-out",
-          mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          "overflow-hidden transition-all duration-300 ease-in-out border-b border-slate-300/40",
+          menuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0 pointer-events-none"
         )}
       >
-        <div className="bg-white/95 backdrop-blur-xl border-b border-slate-200/60 px-4 pb-6 pt-2">
-          <ul className="flex flex-col gap-1">
-            {NAV_LINKS.map(({ href, label }) => (
-              <li key={href}>
+        <div className="bg-[#edf0f4]/95 backdrop-blur-2xl max-w-7xl mx-auto px-6 py-4 sm:px-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <ul className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
+            {NAV_LINKS.map((link) => (
+              <li key={link.href}>
                 <Link
-                  href={href}
-                  onClick={handleNavClick}
-                  className={cn(
-                    "block px-4 py-3 text-sm font-medium rounded-lg transition-colors",
-                    "text-slate-700 hover:text-slate-900 hover:bg-slate-100",
-                    activeSection === href && "text-indigo-600 bg-indigo-50"
-                  )}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  data-cursor-hover
+                  className="block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 hover:text-slate-950 hover:bg-white/60 transition-colors"
                 >
-                  {label}
+                  {link.label}
                 </Link>
               </li>
             ))}
           </ul>
-          <div className="mt-4 pt-4 border-t border-slate-100">
+
+          <div className="pt-2 sm:pt-0">
             <a
               href="/resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className={cn(
-                buttonVariants({ size: "default" }),
-                "w-full bg-gradient-to-r from-indigo-500 to-violet-600 text-white border-none justify-center"
-              )}
+              data-cursor-hover
+              className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-slate-950 text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-all"
             >
-              Download Resume
+              Download CV
             </a>
           </div>
         </div>
