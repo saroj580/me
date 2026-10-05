@@ -42,14 +42,14 @@ export default function ProfileCard({ onBookCall }: ProfileCardProps) {
 
       {/* Bottom row: Call to action + Short bio */}
       <div className="mt-6 pt-5 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        <a
-          href="#contact"
+        <button
+          type="button"
           onClick={onBookCall}
           data-cursor-hover
           className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-slate-950 text-white text-sm font-semibold hover:bg-slate-800 active:scale-95 transition-all shadow-sm shrink-0"
         >
           Book a call
-        </a>
+        </button>
 
         <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
           Feel free to explore my portfolio and reach out as a software developer and digital experiences — I&apos;d love to connect!

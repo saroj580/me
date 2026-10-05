@@ -1,58 +1,80 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getFeaturedProjects } from "@/actions/projects";
+import type { Project } from "@/types";
 
-interface ProjectItem {
-  id: string;
-  title: string;
-  subtitle: string;
-  category: string;
-  image: string;
-  liveUrl?: string;
-}
-
-const PROJECTS: ProjectItem[] = [
+const FALLBACK_PROJECTS = [
   {
     id: "health-ai",
     title: "Health AI Predictor",
-    subtitle: "AI/ML health assessment model",
-    category: "AI/ML & Healthcare",
-    image: "/images/projects/health-ai.jpg",
+    description: "AI/ML health assessment model",
+    techStack: ["Next.js", "Python", "FastAPI", "Tailwind CSS", "PyTorch"],
+    imageUrl: "/images/projects/health-ai.jpg",
     liveUrl: "https://github.com/saroj580",
+    repoUrl: "https://github.com/saroj580",
+    featured: true,
+    order: 1,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     id: "fintech-core",
     title: "PulseFlow Analytics",
-    subtitle: "Real-time financial telemetry dashboard",
-    category: "Fintech & Data",
-    image: "/images/projects/health-ai.jpg",
+    description: "Real-time financial telemetry dashboard",
+    techStack: ["React", "TypeScript", "WebSocket", "Apache Kafka", "PostgreSQL"],
+    imageUrl: "/images/projects/health-ai.jpg",
     liveUrl: "https://github.com/saroj580",
+    repoUrl: "https://github.com/saroj580",
+    featured: true,
+    order: 2,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     id: "cloud-sentinel",
     title: "Sentinel Cloud OS",
-    subtitle: "Distributed infrastructure monitor",
-    category: "DevOps & Cloud",
-    image: "/images/projects/health-ai.jpg",
+    description: "Distributed infrastructure orchestration platform",
+    techStack: ["Docker", "Kubernetes", "Next.js", "Go", "Prometheus"],
+    imageUrl: "/images/projects/health-ai.jpg",
     liveUrl: "https://github.com/saroj580",
+    repoUrl: "https://github.com/saroj580",
+    featured: true,
+    order: 3,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
 ];
 
 export default function FeaturedWorkCard() {
+  const [projects, setProjects] = useState<Project[]>(FALLBACK_PROJECTS);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  useEffect(() => {
+    // Dynamic fetch from Neon PostgreSQL via Server Action
+    getFeaturedProjects()
+      .then((res) => {
+        if (res.success && res.data && res.data.length > 0) {
+          setProjects(res.data);
+        }
+      })
+      .catch((err) => {
+        console.warn("[FeaturedWorkCard] Fetching projects failed, using fallback:", err);
+      });
+  }, []);
+
   const prevProject = () => {
-    setCurrentIndex((prev) => (prev === 0 ? PROJECTS.length - 1 : prev - 1));
+    setCurrentIndex((prev) => (prev === 0 ? projects.length - 1 : prev - 1));
   };
 
   const nextProject = () => {
-    setCurrentIndex((prev) => (prev === PROJECTS.length - 1 ? 0 : prev + 1));
+    setCurrentIndex((prev) => (prev === projects.length - 1 ? 0 : prev + 1));
   };
 
-  const current = PROJECTS[currentIndex];
+  const current = projects[currentIndex] || FALLBACK_PROJECTS[0];
 
   return (
     <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-[0_4px_24px_rgba(0,0,0,0.03)] border border-slate-200/60 flex flex-col justify-between h-full transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
@@ -62,7 +84,7 @@ export default function FeaturedWorkCard() {
           Featured Work
         </h2>
         <span className="text-xs font-mono font-medium text-slate-400">
-          0{currentIndex + 1} / 0{PROJECTS.length}
+          0{currentIndex + 1} / 0{projects.length}
         </span>
       </div>
 
@@ -78,7 +100,7 @@ export default function FeaturedWorkCard() {
             className="relative w-full h-full"
           >
             <Image
-              src={current.image}
+              src={current.imageUrl || "/images/projects/health-ai.jpg"}
               alt={current.title}
               fill
               sizes="(max-width: 768px) 100vw, 400px"
@@ -90,17 +112,31 @@ export default function FeaturedWorkCard() {
 
       {/* Project Details */}
       <div className="mb-4">
-        <h3 className="font-bold text-slate-900 text-base leading-snug">
-          {current.title}
-          <span className="font-normal text-slate-500"> — {current.subtitle}</span>
-        </h3>
+        <div className="flex items-center justify-between">
+          <h3 className="font-bold text-slate-900 text-base leading-snug">
+            {current.title}
+            <span className="font-normal text-slate-500"> — {current.description}</span>
+          </h3>
+          {current.liveUrl && (
+            <a
+              href={current.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cursor-hover
+              className="p-1 rounded-md text-slate-400 hover:text-slate-900 transition-colors"
+              title="View repository / live demo"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          )}
+        </div>
       </div>
 
       {/* Carousel Controls */}
       <div className="flex items-center justify-between py-2 border-t border-slate-100">
         {/* Pagination Dots */}
         <div className="flex items-center gap-1.5">
-          {PROJECTS.map((p, idx) => (
+          {projects.map((p, idx) => (
             <button
               key={p.id}
               onClick={() => setCurrentIndex(idx)}
@@ -137,7 +173,9 @@ export default function FeaturedWorkCard() {
 
       {/* Bottom CTA */}
       <a
-        href="#work"
+        href="https://github.com/saroj580"
+        target="_blank"
+        rel="noopener noreferrer"
         data-cursor-hover
         className="mt-3 w-full py-3 rounded-full bg-slate-950 text-white text-xs font-bold uppercase tracking-wider text-center hover:bg-slate-800 active:scale-98 transition-all block shadow-sm"
       >
