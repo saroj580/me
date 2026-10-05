@@ -49,22 +49,30 @@ const FALLBACK_PROJECTS = [
   },
 ];
 
-export default function FeaturedWorkCard() {
-  const [projects, setProjects] = useState<Project[]>(FALLBACK_PROJECTS);
+interface FeaturedWorkCardProps {
+  initialProjects?: Project[];
+}
+
+export default function FeaturedWorkCard({ initialProjects }: FeaturedWorkCardProps) {
+  const [projects, setProjects] = useState<Project[]>(
+    initialProjects && initialProjects.length > 0 ? initialProjects : FALLBACK_PROJECTS
+  );
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    // Dynamic fetch from Neon PostgreSQL via Server Action
-    getFeaturedProjects()
-      .then((res) => {
-        if (res.success && res.data && res.data.length > 0) {
-          setProjects(res.data);
-        }
-      })
-      .catch((err) => {
-        console.warn("[FeaturedWorkCard] Fetching projects failed, using fallback:", err);
-      });
-  }, []);
+    // If not supplied from server, fetch via Server Action
+    if (!initialProjects || initialProjects.length === 0) {
+      getFeaturedProjects()
+        .then((res) => {
+          if (res.success && res.data && res.data.length > 0) {
+            setProjects(res.data);
+          }
+        })
+        .catch((err) => {
+          console.warn("[FeaturedWorkCard] Fetching projects failed, using fallback:", err);
+        });
+    }
+  }, [initialProjects]);
 
   const prevProject = () => {
     setCurrentIndex((prev) => (prev === 0 ? projects.length - 1 : prev - 1));

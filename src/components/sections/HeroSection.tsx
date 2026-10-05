@@ -9,7 +9,13 @@ import MapCard from "@/components/bento/MapCard";
 import GitHubCard from "@/components/bento/GitHubCard";
 import ContactModal from "@/components/shared/ContactModal";
 
-export default function HeroSection() {
+import type { Project } from "@/types";
+
+interface HeroSectionProps {
+  initialProjects?: Project[];
+}
+
+export default function HeroSection({ initialProjects }: HeroSectionProps) {
   const [isContactOpen, setIsContactOpen] = useState(false);
 
   return (
@@ -45,7 +51,7 @@ export default function HeroSection() {
 
           {/* Right Column Section (4 cols on lg) */}
           <div className="lg:col-span-4 flex flex-col">
-            <FeaturedWorkCard />
+            <FeaturedWorkCard initialProjects={initialProjects} />
           </div>
         </div>
       </section>

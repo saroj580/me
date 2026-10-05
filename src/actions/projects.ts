@@ -2,16 +2,25 @@
 
 import { prisma } from "@/lib/prisma";
 import { type Project, type ActionResult } from "@/types";
+import { unstable_cache } from "next/cache";
 
+// Cached query for featured projects (revalidates every hour or on tag invalidation)
+const getCachedFeaturedProjects = unstable_cache(
+  async () => {
+    return prisma.project.findMany({
+      where: { featured: true },
+      orderBy: { order: "asc" },
+    });
+  },
+  ["featured-projects"],
+  { revalidate: 3600, tags: ["projects"] }
+);
 
 export async function getFeaturedProjects(): Promise<
   ActionResult<Project[]>
 > {
   try {
-    const projects = await prisma.project.findMany({
-      where: { featured: true },
-      orderBy: { order: "asc" },
-    });
+    const projects = await getCachedFeaturedProjects();
     return { success: true, data: projects };
   } catch (error) {
     console.error("[getFeaturedProjects] Error:", error);
