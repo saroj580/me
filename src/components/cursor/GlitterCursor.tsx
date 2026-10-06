@@ -300,7 +300,8 @@ export default function GlitterCursor() {
           antialias: false,
           powerPreference: "high-performance",
         }}
-        style={{ background: "transparent" }}
+        style={{ background: "transparent", pointerEvents: "none" }}
+        className="pointer-events-none"
         dpr={[1, 1.5]}
       >
         <CursorScene />

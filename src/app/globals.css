@@ -271,4 +271,11 @@ code, pre, kbd {
   html {
     @apply font-sans;
   }
+
+  /* Prevent 3D canvas overlay from intercepting any mouse clicks */
+  #magical-cursor-canvas,
+  #magical-cursor-canvas *,
+  #magical-cursor-canvas canvas {
+    pointer-events: none !important;
+  }
 }
