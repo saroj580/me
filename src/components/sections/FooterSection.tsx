@@ -7,6 +7,7 @@ import { useModal } from "@/contexts/ModalContext";
 interface FooterSectionProps {
   onOpenContact?: (serviceName?: string) => void;
   onOpenProjects?: () => void;
+  onOpenExperience?: () => void;
 }
 
 const SERVICES = [
@@ -19,10 +20,12 @@ const SERVICES = [
 export default function FooterSection({
   onOpenContact,
   onOpenProjects,
+  onOpenExperience,
 }: FooterSectionProps) {
-  const { openContact, openProjects } = useModal();
+  const { openContact, openProjects, openExperience } = useModal();
   const handleContact = onOpenContact || openContact;
   const handleProjects = onOpenProjects || openProjects;
+  const handleExperience = onOpenExperience || openExperience;
 
   const scrollToTop = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -78,17 +81,14 @@ export default function FooterSection({
                 </button>
               </li>
               <li>
-                <a
-                  href="#about"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
-                  }}
+                <button
+                  type="button"
+                  onClick={() => handleExperience()}
                   data-cursor-hover
-                  className="text-slate-400 hover:text-white text-sm transition-colors block"
+                  className="text-slate-400 hover:text-white text-sm transition-colors block text-left cursor-pointer"
                 >
                   Experience
-                </a>
+                </button>
               </li>
               <li>
                 <button
