@@ -49,11 +49,20 @@ const FALLBACK_PROJECTS = [
   },
 ];
 
+import { useModal } from "@/contexts/ModalContext";
+
 interface FeaturedWorkCardProps {
   initialProjects?: Project[];
+  onViewAllProjects?: () => void;
 }
 
-export default function FeaturedWorkCard({ initialProjects }: FeaturedWorkCardProps) {
+export default function FeaturedWorkCard({
+  initialProjects,
+  onViewAllProjects,
+}: FeaturedWorkCardProps) {
+  const { openProjects } = useModal();
+  const handleViewAll = onViewAllProjects || openProjects;
+
   const [projects, setProjects] = useState<Project[]>(
     initialProjects && initialProjects.length > 0 ? initialProjects : FALLBACK_PROJECTS
   );
@@ -180,15 +189,14 @@ export default function FeaturedWorkCard({ initialProjects }: FeaturedWorkCardPr
       </div>
 
       {/* Bottom CTA */}
-      <a
-        href="https://github.com/saroj580"
-        target="_blank"
-        rel="noopener noreferrer"
+      <button
+        type="button"
+        onClick={handleViewAll}
         data-cursor-hover
-        className="mt-3 w-full py-3 rounded-full bg-slate-950 text-white text-xs font-bold uppercase tracking-wider text-center hover:bg-slate-800 active:scale-98 transition-all block shadow-sm"
+        className="mt-3 w-full py-3 rounded-full bg-slate-950 text-white text-xs font-bold uppercase tracking-wider text-center hover:bg-slate-800 active:scale-98 transition-all block shadow-sm cursor-pointer"
       >
         VIEW ALL PROJECTS
-      </a>
+      </button>
     </div>
   );
 }

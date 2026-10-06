@@ -1,13 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowUpRight, Sparkles } from "lucide-react";
+import { useModal } from "@/contexts/ModalContext";
 
-interface ProfileCardProps {
-  onBookCall?: () => void;
-}
+export default function ProfileCard() {
+  const { openContact } = useModal();
 
-export default function ProfileCard({ onBookCall }: ProfileCardProps) {
   return (
     <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-[0_4px_24px_rgba(0,0,0,0.03)] border border-slate-200/60 flex flex-col justify-between transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
       {/* Top row: Avatar + Name & Status */}
@@ -28,10 +26,16 @@ export default function ProfileCard({ onBookCall }: ProfileCardProps) {
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
               Alex Carter
             </h1>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+            <button
+              type="button"
+              onClick={() => openContact("Job Opportunity / Full-time Role Discussion")}
+              data-cursor-hover
+              title="Available for full-time roles & consulting — click to connect"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60 hover:bg-emerald-100 hover:border-emerald-300 transition-colors cursor-pointer"
+            >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               OPEN TO WORK
-            </span>
+            </button>
           </div>
 
           <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
@@ -44,9 +48,9 @@ export default function ProfileCard({ onBookCall }: ProfileCardProps) {
       <div className="mt-6 pt-5 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <button
           type="button"
-          onClick={onBookCall}
+          onClick={() => openContact("Schedule a Call / Consultation")}
           data-cursor-hover
-          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-slate-950 text-white text-sm font-semibold hover:bg-slate-800 active:scale-95 transition-all shadow-sm shrink-0"
+          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-slate-950 text-white text-sm font-semibold hover:bg-slate-800 active:scale-95 transition-all shadow-sm shrink-0 cursor-pointer"
         >
           Book a call
         </button>

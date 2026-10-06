@@ -2,13 +2,12 @@
 
 import Link from "next/link";
 
-const QUICK_LINKS = [
-  { label: "About", href: "#about" },
-  { label: "Work", href: "#work" },
-  { label: "Experience", href: "#experience" },
-  { label: "Contact", href: "#contact" },
-  { label: "Blogs", href: "#blogs" },
-];
+import { useModal } from "@/contexts/ModalContext";
+
+interface FooterSectionProps {
+  onOpenContact?: (serviceName?: string) => void;
+  onOpenProjects?: () => void;
+}
 
 const SERVICES = [
   "Web Development",
@@ -17,7 +16,19 @@ const SERVICES = [
   "Tech Consulting",
 ];
 
-export default function FooterSection() {
+export default function FooterSection({
+  onOpenContact,
+  onOpenProjects,
+}: FooterSectionProps) {
+  const { openContact, openProjects } = useModal();
+  const handleContact = onOpenContact || openContact;
+  const handleProjects = onOpenProjects || openProjects;
+
+  const scrollToTop = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <footer id="contact" className="bg-[#070d19] text-white pt-16 pb-12 mt-16 border-t border-slate-800/60">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
@@ -25,8 +36,15 @@ export default function FooterSection() {
           {/* Column 1: Brand & Tagline */}
           <div className="md:col-span-5 space-y-3">
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
-              <span className="text-[#3b82f6]">Alex Carter</span>{" "}
-              <span className="text-white">| Software Developer</span>
+              <a
+                href="#about"
+                onClick={scrollToTop}
+                data-cursor-hover
+                className="hover:opacity-90 transition-opacity"
+              >
+                <span className="text-[#3b82f6]">Alex Carter</span>{" "}
+                <span className="text-white">| Software Developer</span>
+              </a>
             </h2>
             <p className="text-slate-400 text-sm max-w-sm leading-relaxed">
               Crafting powerful, scalable digital solutions.
@@ -39,17 +57,60 @@ export default function FooterSection() {
               Quick Links
             </h3>
             <ul className="space-y-2.5">
-              {QUICK_LINKS.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    data-cursor-hover
-                    className="text-slate-400 hover:text-white text-sm transition-colors block"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+              <li>
+                <a
+                  href="#about"
+                  onClick={scrollToTop}
+                  data-cursor-hover
+                  className="text-slate-400 hover:text-white text-sm transition-colors block"
+                >
+                  About
+                </a>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={handleProjects}
+                  data-cursor-hover
+                  className="text-slate-400 hover:text-white text-sm transition-colors block text-left cursor-pointer"
+                >
+                  Work
+                </button>
+              </li>
+              <li>
+                <a
+                  href="#about"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  data-cursor-hover
+                  className="text-slate-400 hover:text-white text-sm transition-colors block"
+                >
+                  Experience
+                </a>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => handleContact("General Inquiry")}
+                  data-cursor-hover
+                  className="text-slate-400 hover:text-white text-sm transition-colors block text-left cursor-pointer"
+                >
+                  Contact
+                </button>
+              </li>
+              <li>
+                <a
+                  href="https://github.com/saroj580"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-cursor-hover
+                  className="text-slate-400 hover:text-white text-sm transition-colors block"
+                >
+                  Blogs
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -60,8 +121,15 @@ export default function FooterSection() {
             </h3>
             <ul className="space-y-2.5">
               {SERVICES.map((service) => (
-                <li key={service} className="text-slate-400 text-sm">
-                  {service}
+                <li key={service}>
+                  <button
+                    type="button"
+                    onClick={() => handleContact(`Inquiry regarding ${service} Services`)}
+                    data-cursor-hover
+                    className="text-slate-400 hover:text-white hover:translate-x-1 transition-all text-sm block text-left cursor-pointer"
+                  >
+                    {service}
+                  </button>
                 </li>
               ))}
             </ul>

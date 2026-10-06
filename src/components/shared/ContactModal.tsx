@@ -4,12 +4,19 @@ import { useState } from "react";
 import { X, Send, Sparkles, CheckCircle2, Loader2 } from "lucide-react";
 import { submitContactForm } from "@/actions/contact";
 
+import { useEffect } from "react";
+
 interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialSubject?: string;
 }
 
-export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
+export default function ContactModal({
+  isOpen,
+  onClose,
+  initialSubject = "Software Development & Collaboration Inquiry",
+}: ContactModalProps) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -17,9 +24,15 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    subject: "Software Development & Collaboration Inquiry",
+    subject: initialSubject,
     body: "",
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      setForm((prev) => ({ ...prev, subject: initialSubject }));
+    }
+  }, [isOpen, initialSubject]);
 
   if (!isOpen) return null;
 
