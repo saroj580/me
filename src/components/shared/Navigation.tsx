@@ -10,15 +10,18 @@ import { useModal } from "@/contexts/ModalContext";
 interface NavigationProps {
   onOpenContact?: () => void;
   onOpenProjects?: () => void;
+  onOpenExperience?: () => void;
 }
 
 export default function Navigation({
   onOpenContact,
   onOpenProjects,
+  onOpenExperience,
 }: NavigationProps) {
-  const { openContact, openProjects } = useModal();
+  const { openContact, openProjects, openExperience } = useModal();
   const handleContact = onOpenContact || openContact;
   const handleProjects = onOpenProjects || openProjects;
+  const handleExperience = onOpenExperience || openExperience;
 
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -143,9 +146,12 @@ export default function Navigation({
             </li>
             <li>
               <button
-                onClick={() => scrollToSection("about")}
+                onClick={() => {
+                  setMenuOpen(false);
+                  handleExperience();
+                }}
                 data-cursor-hover
-                className="block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 hover:text-slate-950 hover:bg-white/60 transition-colors text-left"
+                className="block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 hover:text-slate-950 hover:bg-white/60 transition-colors text-left w-full cursor-pointer"
               >
                 Experience
               </button>
